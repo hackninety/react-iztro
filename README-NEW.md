@@ -36,6 +36,9 @@
    | 生产分支 | `main` |
    | 构建命令 | `npm run build-storybook` |
    | 构建输出目录 | `storybook-static` |
+   | 部署命令 | 留空（不填） |
+
+   > **⚠️ 注意**：**部署命令必须留空**。Cloudflare Pages 会在构建完成后自动完成部署，无需也不能填写 `wrangler pages deploy`，否则会因构建环境中未安装 wrangler 而报错 `/bin/sh: wrangler: not found`。
 
 4. 配置环境变量（可选）：
 
@@ -48,14 +51,7 @@
    > **⚠️ 注意**：仓库中已删除 `yarn.lock` 并将其加入 `.gitignore`，仅保留 `package-lock.json`。这样 Cloudflare 构建环境会自动检测并使用 npm 安装依赖，避免 Yarn 4.x 与旧版锁文件不兼容导致的 `YN0028` 构建失败。
 
 5. 点击 **Save and Deploy**，等待构建完成
-5. 后续每次 `git push origin main`，Cloudflare Pages 会自动触发重新构建和部署
-
-   也可以在本地手动触发一次部署（需先安装并登录 Wrangler）：
-
-   ```bash
-   npm run build-storybook
-   wrangler pages deploy storybook-static --project-name=react-iztro
-   ```
+6. 后续每次 `git push origin main`，Cloudflare Pages 会自动触发重新构建和部署
 
 ### 方式二：通过 Wrangler CLI 手动部署
 
