@@ -131,3 +131,6 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# 使用 npm，忽略 yarn.lock 避免 Cloudflare 构建环境误用 Yarn 4
+yarn.lock
