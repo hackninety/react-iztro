@@ -165,6 +165,7 @@ export function astrolabeToJson(
     solarDate: horoscope.solarDate,
     allDecadals: getAllDecadals(astrolabe),
     currentDecadal: serializeHoroscopeItem(horoscope.decadal),
+    decadal: serializeHoroscopeItem(horoscope.decadal),
     age: {
       ...serializeHoroscopeItem(horoscope.age),
       nominalAge: horoscope.age.nominalAge,
