@@ -76,6 +76,12 @@ export function astrolabeToJson(
   astrolabe: IFunctionalAstrolabe,
   horoscope?: IFunctionalHoroscope
 ) {
+  const meta = {
+    school: "南派三合派（全书派）",
+    basis: "《紫微斗数全书》",
+    note: "所有命盘分析解读全部依照此流派为准",
+  };
+
   const basic = {
     gender: astrolabe.gender,
     solarDate: astrolabe.solarDate,
@@ -112,7 +118,7 @@ export function astrolabeToJson(
   }));
 
   if (!horoscope) {
-    return { basic, palaces };
+    return { meta, basic, palaces };
   }
 
   const horoscopeData = {
@@ -131,5 +137,5 @@ export function astrolabeToJson(
     monthlyOfCurrentYear: getMonthlyOfCurrentYear(astrolabe, horoscope),
   };
 
-  return { basic, palaces, horoscope: horoscopeData };
+  return { meta, basic, palaces, horoscope: horoscopeData };
 }
