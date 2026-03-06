@@ -192,14 +192,33 @@ git push origin main          # 推送到自己的仓库
 
 ## 本地开发
 
+### 安装依赖
+
 ```bash
-# 安装依赖
 npm install
+```
 
-# 启动 Storybook 进行开发调试
+### 热更新开发调试（推荐）
+
+```bash
 npm run storybook
+```
 
-# 构建
+启动后浏览器访问 [http://localhost:6006](http://localhost:6006)。
+
+Storybook 内置热模块替换（HMR），保存任何源文件后页面会**自动刷新**，无需手动重启。调试步骤：
+
+1. 在左侧 **Controls** 面板中输入生日（格式 `YYYY-MM-DD`）、出生时辰、性别
+2. 命盘会实时渲染，底部 **Ai Code** 面板同步输出当前命盘的 JSON 数据
+3. 修改 `src/` 下的任意文件并保存，页面自动重新渲染
+
+### 静态构建
+
+```bash
+# 仅构建 Storybook 静态产物（部署时使用）
+npm run build-storybook
+
+# 构建组件库本身（发布 npm 包时使用，日常开发不需要）
 npm run build
 ```
 

@@ -1,8 +1,15 @@
 import { IFunctionalAstrolabe } from "iztro/lib/astro/FunctionalAstrolabe";
 import { IFunctionalHoroscope } from "iztro/lib/astro/FunctionalHoroscope";
 import { HoroscopeItem } from "iztro/lib/data/types";
+import { solar2lunar, lunar2solar } from "lunar-lite";
 
-function serializeStar(star: { name: string; type: string; scope: string; brightness?: string; mutagen?: string }) {
+function serializeStar(star: {
+  name: string;
+  type: string;
+  scope: string;
+  brightness?: string;
+  mutagen?: string;
+}) {
   return {
     name: star.name,
     type: star.type,
@@ -24,6 +31,45 @@ function serializeHoroscopeItem(item: HoroscopeItem) {
       ? { stars: item.stars.map((group) => group.map(serializeStar)) }
       : {}),
   };
+}
+
+let _monthly12Cache: {
+  cacheKey: string;
+  data: Record<string, unknown>[];
+} | null = null;
+
+function getMonthlyOfCurrentYear(
+  astrolabe: IFunctionalAstrolabe,
+  horoscope: IFunctionalHoroscope
+) {
+  const lunar = solar2lunar(horoscope.solarDate);
+  const lunarYear = lunar.lunarYear;
+  const cacheKey = `${astrolabe.solarDate}|${astrolabe.gender}|${lunarYear}`;
+
+  if (_monthly12Cache && _monthly12Cache.cacheKey === cacheKey) {
+    return _monthly12Cache.data;
+  }
+
+  const results = [];
+  for (let m = 1; m <= 12; m++) {
+    const solarDate = lunar2solar(`${lunarYear}-${m}-15`);
+    const h = astrolabe.horoscope(solarDate.toString());
+    const mi = h.monthly;
+    results.push({
+      month: m,
+      index: mi.index,
+      heavenlyStem: mi.heavenlyStem,
+      earthlyBranch: mi.earthlyBranch,
+      palaceNames: mi.palaceNames,
+      mutagen: mi.mutagen,
+      ...(mi.stars
+        ? { stars: mi.stars.map((group) => group.map(serializeStar)) }
+        : {}),
+    });
+  }
+
+  _monthly12Cache = { cacheKey, data: results };
+  return results;
 }
 
 export function astrolabeToJson(
@@ -81,7 +127,8 @@ export function astrolabeToJson(
       ...serializeHoroscopeItem(horoscope.yearly),
       yearlyDecStar: horoscope.yearly.yearlyDecStar,
     },
-    monthly: serializeHoroscopeItem(horoscope.monthly),
+    monthlyCurrent: serializeHoroscopeItem(horoscope.monthly),
+    monthlyOfCurrentYear: getMonthlyOfCurrentYear(astrolabe, horoscope),
   };
 
   return { basic, palaces, horoscope: horoscopeData };

@@ -22,15 +22,16 @@ const AiCodePanel: React.FC = () => {
   }, []);
 
   const jsonStr = data ? JSON.stringify(data, null, 2) : "";
+  const compactJsonStr = data ? JSON.stringify(data) : "";
 
   const handleCopy = useCallback(() => {
-    if (!jsonStr) return;
-    navigator.clipboard.writeText(jsonStr).then(() => {
+    if (!compactJsonStr) return;
+    navigator.clipboard.writeText(compactJsonStr).then(() => {
       setCopied(true);
       if (timerRef.current) clearTimeout(timerRef.current);
       timerRef.current = setTimeout(() => setCopied(false), 2000);
     });
-  }, [jsonStr]);
+  }, [compactJsonStr]);
 
   if (!data) {
     return (
@@ -52,7 +53,7 @@ const AiCodePanel: React.FC = () => {
         }}
       >
         <span style={{ fontSize: 13, fontWeight: 600 }}>
-          命盘 JSON（可直接复制给 AI 分析）
+          命盘 JSON（当前大限/小限/流年/流月 + 当前流年12流月）
         </span>
         <button
           onClick={handleCopy}
