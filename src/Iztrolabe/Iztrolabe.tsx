@@ -1,7 +1,9 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Izpalace } from "../Izpalace/Izpalace";
 import { IztrolabeProps } from "./Iztrolabe.type";
 import { IzpalaceCenter } from "../IzpalaceCenter";
+import { ErrorBoundary } from "../ErrorBoundary";
+import { astrolabeToJson } from "../utils/astrolabeToJson";
 import classNames from "classnames";
 import { useIztro } from "iztro-hook";
 import "./Iztrolabe.css";
@@ -11,7 +13,20 @@ import { HeavenlyStemKey } from "iztro/lib/i18n";
 import { getPalaceNames } from "iztro/lib/astro";
 import "../locales"
 
-export const Iztrolabe: React.FC<IztrolabeProps> = (props) => {
+function isValidDateStr(str: string): boolean {
+  if (!str) return false;
+  const match = str.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+  if (!match) return false;
+  const [, y, m, d] = match.map(Number);
+  const date = new Date(y, m - 1, d);
+  return (
+    date.getFullYear() === y &&
+    date.getMonth() === m - 1 &&
+    date.getDate() === d
+  );
+}
+
+const IztrolabeInner: React.FC<IztrolabeProps> = (props) => {
   const [taichiPoint, setTaichiPoint] = useState(-1);
   const [taichiPalaces, setTaichiPalaces] = useState<undefined | string[]>();
   const [activeHeavenlyStem, setActiveHeavenlyStem] =
@@ -25,8 +40,11 @@ export const Iztrolabe: React.FC<IztrolabeProps> = (props) => {
   const [showHourly, setShowShowHourly] = useState(false);
   const [horoscopeDate, setHoroscopeDate] = useState<string | Date>();
   const [horoscopeHour, setHoroscopeHour] = useState<number>();
+
+  const safeBirthday = isValidDateStr(props.birthday) ? props.birthday : "";
+
   const { astrolabe, horoscope, setHoroscope } = useIztro({
-    birthday: props.birthday,
+    birthday: safeBirthday,
     birthTime: props.birthTime,
     gender: props.gender,
     birthdayType: props.birthdayType,
@@ -36,9 +54,22 @@ export const Iztrolabe: React.FC<IztrolabeProps> = (props) => {
     astroType: props.astroType,
     options: props.options,
   });
+
+  const prevJsonRef = useRef<string>("");
+
   useEffect(() => {
-    // i18next.addResources()
-  }, [])
+    if (!astrolabe) return;
+    try {
+      const data = astrolabeToJson(astrolabe, horoscope);
+      const json = JSON.stringify(data);
+      if (json === prevJsonRef.current) return;
+      prevJsonRef.current = json;
+      window.dispatchEvent(
+        new CustomEvent("iztro-data-update", { detail: data })
+      );
+    } catch (_) {}
+  }, [astrolabe, horoscope]);
+
 
   const toggleShowScope = (scope: Scope) => {
     switch (scope) {
@@ -173,3 +204,9 @@ export const Iztrolabe: React.FC<IztrolabeProps> = (props) => {
     </div>
   );
 };
+
+export const Iztrolabe: React.FC<IztrolabeProps> = (props) => (
+  <ErrorBoundary>
+    <IztrolabeInner {...props} />
+  </ErrorBoundary>
+);

@@ -1,4 +1,5 @@
 import type { StorybookConfig } from "@storybook/react-webpack5";
+import path from "path";
 
 const config: StorybookConfig = {
   stories: ["../src/**/*.stories.@(js|jsx|mjs|ts|tsx)"],
@@ -8,6 +9,7 @@ const config: StorybookConfig = {
     "@storybook/addon-onboarding",
     "@storybook/addon-interactions",
   ],
+  managerEntries: [path.resolve(__dirname, "./manager.tsx")],
   framework: {
     name: "@storybook/react-webpack5",
     options: {},
