@@ -38,13 +38,52 @@ let _monthly12Cache: {
   data: Record<string, unknown>[];
 } | null = null;
 
+let _allDecadalsCache: {
+  cacheKey: string;
+  data: Record<string, unknown>[];
+} | null = null;
+
+function getAllDecadals(astrolabe: IFunctionalAstrolabe) {
+  const cacheKey = `${astrolabe.solarDate}|${astrolabe.time}|${astrolabe.gender}`;
+
+  if (_allDecadalsCache && _allDecadalsCache.cacheKey === cacheKey) {
+    return _allDecadalsCache.data;
+  }
+
+  const birthYear = parseInt(astrolabe.solarDate.split("-")[0], 10);
+  const results = [];
+
+  for (const palace of astrolabe.palaces) {
+    const midAge = Math.floor(
+      (palace.decadal.range[0] + palace.decadal.range[1]) / 2
+    );
+    const targetDate = `${birthYear + midAge}-6-15`;
+
+    try {
+      const h = astrolabe.horoscope(targetDate);
+      const d = h.decadal;
+      results.push({
+        ageRange: palace.decadal.range,
+        ...serializeHoroscopeItem(d),
+      });
+    } catch {
+      // skip if date is out of calendar range
+    }
+  }
+
+  results.sort((a, b) => a.ageRange[0] - b.ageRange[0]);
+
+  _allDecadalsCache = { cacheKey, data: results };
+  return results;
+}
+
 function getMonthlyOfCurrentYear(
   astrolabe: IFunctionalAstrolabe,
   horoscope: IFunctionalHoroscope
 ) {
   const lunar = solar2lunar(horoscope.solarDate);
   const lunarYear = lunar.lunarYear;
-  const cacheKey = `${astrolabe.solarDate}|${astrolabe.gender}|${lunarYear}`;
+  const cacheKey = `${astrolabe.solarDate}|${astrolabe.time}|${astrolabe.gender}|${lunarYear}`;
 
   if (_monthly12Cache && _monthly12Cache.cacheKey === cacheKey) {
     return _monthly12Cache.data;
@@ -124,7 +163,8 @@ export function astrolabeToJson(
   const horoscopeData = {
     lunarDate: horoscope.lunarDate,
     solarDate: horoscope.solarDate,
-    decadal: serializeHoroscopeItem(horoscope.decadal),
+    allDecadals: getAllDecadals(astrolabe),
+    currentDecadal: serializeHoroscopeItem(horoscope.decadal),
     age: {
       ...serializeHoroscopeItem(horoscope.age),
       nominalAge: horoscope.age.nominalAge,

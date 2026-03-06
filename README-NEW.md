@@ -6,11 +6,7 @@
 
 本项目是 [react-iztro](https://github.com/SylarLong/react-iztro) 的 Fork 二改版本，在原项目基础上增加以下功能：
 
-- **大运盘 JSON 导出** — 将大运盘数据转换为结构化 JSON 格式
-- **流年盘 JSON 导出** — 将流年盘数据转换为结构化 JSON 格式
-- **流月盘 JSON 导出** — 将流月盘数据转换为结构化 JSON 格式
-- **流日盘 JSON 导出** — 将流日盘数据转换为结构化 JSON 格式
-- **流时盘 JSON 导出** — 将流时盘数据转换为结构化 JSON 格式
+- **命盘 JSON 导出** — 将命盘的大小限/流年/流月数据转换为结构化 JSON 格式
 
 导出的 JSON 数据用于上传至 AI 进行紫微斗数命盘分析。
 
