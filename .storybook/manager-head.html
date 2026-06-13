@@ -1,0 +1,52 @@
+<style>
+  /*
+   * 移动端（Storybook 移动布局，视口 ≤600px）底部导航适配：
+   * 隐藏 “Sidebar” 与 “Settings” 两个标签，仅保留 “Canvas” 与 “Addons”，
+   * 与桌面端 manager.tsx 里 showNav / showToolbar = false 的效果保持一致。
+   *
+   * 这些按钮没有稳定的 class（emotion 随机 hash，构建会变化），因此按
+   * Storybook 固定的渲染顺序定位：Sidebar(1) / Canvas(2) / Settings(3) / Addons(4)。
+   * 用直接子选择器 `nav > button`，以避开同样是 <nav> 的（已隐藏的）侧边栏容器
+   * —— 该容器没有直接子 button，不会被命中。
+   */
+  @media (max-width: 600px) {
+    nav > button:nth-of-type(1), /* Sidebar */
+    nav > button:nth-of-type(3) { /* Settings */
+      display: none !important;
+    }
+  }
+
+  /*
+   * 移动端 Addons 面板：从“侧边展开”改为“底部展开”。
+   *
+   * Storybook 7.4 移动布局把命盘缩成左上角缩略图、Addons 面板贴在右侧
+   * （left:75px），没有任何配置项可改。这里用 CSS 把它改成底部抽屉：
+   *   1) 面板锚定到底部、铺满宽度（bottom sheet）；
+   *      不覆写 transform —— Storybook 自带的显隐动画恰好是 translateY
+   *      （展开 0 / 收起 +772），于是动画天然变成“从底部滑出/收回”。
+   *   2) 取消命盘缩略图的 0.2 缩放，让命盘铺满（面板展开时盖住下方 60%，
+   *      顶部仍可见命盘；收起面板即恢复整屏命盘）。
+   *
+   * 选择器锚定 Storybook 稳定 id（非 emotion hash）：
+   *   #storybook-panel-root   面板内容根（其父元素 = 面板窗格）
+   *   #storybook-preview-iframe 命盘 iframe（定位承载它的外层命盘窗格）
+   */
+  @media (max-width: 600px) {
+    /* 面板窗格 → 底部抽屉，保留 Storybook 的 transform 做上滑/下收动画。
+       z-index 必须远高于命盘 —— <iframe> 默认会浮在同级元素之上，
+       仅靠 DOM 顺序或 z-index:1 仍会被命盘盖住。 */
+    div:has(> #storybook-panel-root) {
+      inset: auto 0 0 0 !important;
+      width: 100% !important;
+      height: 60% !important;
+      z-index: 50 !important;
+    }
+    /* 命盘外层窗格 → 取消缩略图缩放并铺满；显式 z-index:0 压到面板之下，
+       抵消 iframe 合成层默认上浮的行为。 */
+    div:has(> div > #storybook-panel-root) > div:has(#storybook-preview-iframe) {
+      transform: none !important;
+      inset: 0 !important;
+      z-index: 0 !important;
+    }
+  }
+</style>

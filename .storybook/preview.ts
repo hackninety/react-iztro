@@ -34,7 +34,7 @@ const preview: Preview = {
     },
   ],
   parameters: {
-    actions: { argTypesRegex: "^on[A-Z].*" },
+    // actions 插件已在 main.ts 关闭，此处不再配置 argTypesRegex（避免无效告警）
     controls: {
       matchers: {
         color: /(background|color)$/i,
