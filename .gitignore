@@ -137,3 +137,9 @@ yarn.lock
 
 # Storybook 本地调试构建产物
 storybook-static/
+
+# macOS 系统文件
+.DS_Store
+
+# Claude Code 本地配置（含预览/调试用 launch.json）
+.claude/
