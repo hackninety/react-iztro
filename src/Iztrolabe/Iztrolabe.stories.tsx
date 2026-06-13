@@ -12,13 +12,14 @@ import {
 const meta: Meta<any> = {
   component: IztroAstrolabe,
   argTypes: {
-    birthday: { type: "string", required: true },
+    birthday: { name: "出生日期", type: "string", required: true },
     /* 真太阳时相关 args 由自定义 UI 控制，不在 Controls 面板显示 */
     exactTime: { table: { disable: true } },
     birthProvince: { table: { disable: true } },
     birthCity: { table: { disable: true } },
     birthDistrict: { table: { disable: true } },
     birthTime: {
+      name: "出生时辰",
       type: "number",
       control: {
         type: "select",
@@ -44,48 +45,69 @@ const meta: Meta<any> = {
       options: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
     },
     gender: {
+      name: "性别",
       type: "string",
-      control: "inline-radio",
+      control: { type: "inline-radio", labels: { male: "男", female: "女" } },
       options: ["male", "female"],
       required: true,
     },
     birthdayType: {
+      name: "历法",
       type: "string",
-      control: "inline-radio",
-      options: ["lunar", "solar"],
+      control: { type: "inline-radio", labels: { solar: "公历", lunar: "农历" } },
+      options: ["solar", "lunar"],
     },
     astroType: {
+      name: "排盘方式",
       type: "string",
-      control: "inline-radio",
+      control: {
+        type: "inline-radio",
+        labels: { heaven: "天盘", earth: "地盘", human: "人盘" },
+      },
       options: ["heaven", "earth", "human"],
       defaultValue: "heaven",
     },
-    isLeapMonth: { type: "boolean", if: { arg: "birthdayType", eq: "lunar" } },
-    fixLeap: { type: "boolean" },
+    isLeapMonth: {
+      name: "是否闰月",
+      type: "boolean",
+      if: { arg: "birthdayType", eq: "lunar" },
+      control: { type: "inline-radio", labels: { true: "是", false: "否" } },
+      options: [true, false],
+    },
+    fixLeap: {
+      name: "修正闰月",
+      type: "boolean",
+      control: { type: "inline-radio", labels: { true: "是", false: "否" } },
+      options: [true, false],
+    },
     lang: {
+      name: "语言",
       type: "string",
       control: {
         type: "select",
         labels: {
-          0: "简体中文",
-          1: "繁体中文",
-          2: "日语",
-          3: "韩语",
-          4: "英语",
-          5: "越南语",
+          "zh-CN": "简体中文",
+          "zh-TW": "繁体中文",
+          "ja-JP": "日语",
+          "ko-KR": "韩语",
+          "en-US": "英语",
+          "vi-VN": "越南语",
         },
       },
       options: ["zh-CN", "zh-TW", "ja-JP", "ko-KR", "en-US", "vi-VN"],
     },
     centerPalaceAlign: {
+      name: "中宫对齐",
       type: "boolean",
       description: "中宫居中对齐",
       defaultValue: false,
-      control: {
-        type: "boolean",
-        labels: { true: "居中", false: "默认" },
-      },
+      control: { type: "inline-radio", labels: { true: "居中", false: "默认" } },
+      options: [true, false],
     },
+    options: { name: "高级选项" },
+    width: { name: "宽度" },
+    horoscopeDate: { name: "运限日期" },
+    horoscopeHour: { name: "运限时辰" },
   },
 };
 export default meta;
