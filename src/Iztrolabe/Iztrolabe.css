@@ -1,9 +1,12 @@
 .iztro-astrolabe {
   font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;
+  /* Enable container-query units (cqi) so fonts/spacing scale fluidly with the
+     astrolabe's own width — keeps desktop sizing intact while fitting mobile. */
+  container-type: inline-size;
   display: grid;
   position: relative;
   width: 100%;
-  grid-gap: 3px;
+  grid-gap: clamp(1px, 0.5cqi, 3px);
   grid-template-columns: repeat(4, 1fr);
   grid-auto-rows: 1fr;
   grid-template-areas:

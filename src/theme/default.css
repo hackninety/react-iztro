@@ -1,6 +1,8 @@
 .iztro-astrolabe-theme-default {
-  --iztro-star-font-size-big: 13px;
-  --iztro-star-font-size-small: 12px;
+  /* Fluid font sizes: shrink with the chart on small screens, capped at the
+     original 12/13px on containers wider than ~545px (i.e. desktop unchanged). */
+  --iztro-star-font-size-big: clamp(9px, 2.4cqi, 13px);
+  --iztro-star-font-size-small: clamp(8px, 2.2cqi, 12px);
   --iztro-color-major: #531dab;
   --iztro-color-focus: #000;
   --iztro-color-quan: #2f54eb;
@@ -217,9 +219,16 @@
   cursor: pointer;
 }
 
+/* 移动端（命盘容器较窄时）运限四化按钮改用四周 3px 内边距，避免上下过于贴合 */
+@container (max-width: 600px) {
+  .iztro-palace-fate span {
+    padding: 3px;
+  }
+}
+
 .iztro-palace-center-item {
   font-size: var(--iztro-star-font-size-small);
-  line-height: 22px;
+  line-height: clamp(15px, 4.6cqi, 22px);
 }
 
 .iztro-palace-center-item label {

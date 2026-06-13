@@ -1,8 +1,8 @@
 .iztro-palace {
-  padding: 3px;
+  padding: clamp(1px, 0.8cqi, 3px);
   display: grid;
   text-transform: capitalize;
-  grid-template-rows: auto auto auto 50px;
+  grid-template-rows: auto auto auto clamp(42px, 13cqi, 50px);
   grid-template-columns: repeat(3, 1fr);
   grid-template-areas:
     "major minor adj"
@@ -104,8 +104,8 @@
 }
 .iztro-palace-name .iztro-palace-name-taichi {
   position: absolute;
-  font-size: 12px;
-  line-height: 14px;
+  font-size: var(--iztro-star-font-size-small);
+  line-height: 1.2;
   background-color: var(--iztro-color-major);
   padding: 0 2px;
   color: #fff;
